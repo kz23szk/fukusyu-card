@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'camera_screen.dart';
 
 class MenuScreen extends StatelessWidget {
   static String id = '/menu';
@@ -13,11 +14,9 @@ class MenuScreen extends StatelessWidget {
             ),
             actions: <Widget>[
               IconButton(
-                  icon: Icon(Icons.settings),
-                  onPressed: () => {
-                        print("ido!!")
-                        // Navigator.pushNamed(context, PurchaseScreen.id),
-                      }),
+                icon: Icon(Icons.settings),
+                //onPressed: () => Navigator.pushNamed(context, CameraScreen.id),
+              ),
             ]),
         body: SafeArea(
           child: Container(
