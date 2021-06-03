@@ -15,7 +15,7 @@ class MenuScreen extends StatelessWidget {
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.settings),
-                //onPressed: () => Navigator.pushNamed(context, CameraScreen.id),
+                onPressed: () => Navigator.pushNamed(context, CameraScreen.id),
               ),
             ]),
         body: SafeArea(
@@ -62,6 +62,6 @@ List<Widget> listTiles = <Widget>[
       ),
       child: ListTile(
         leading: Icon(Icons.photo_album),
-        title: Text('Album'),
+        title: Text('指定局面'),
       )),
 ];
