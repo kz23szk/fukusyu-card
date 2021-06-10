@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'camera_screen.dart';
 import 'package:fukusyu_card/models/app_data.dart';
 import 'package:fukusyu_card/models/folder.dart';
+import 'flashcard_screen.dart';
 
 class MenuScreen extends StatelessWidget {
   static String id = '/menu';
@@ -39,7 +40,7 @@ class MenuScreen extends StatelessWidget {
                           color: Colors.black38,
                         ),
                         itemBuilder: (BuildContext context, int index) {
-                          return buildFolderTile(snapshot.data[index]);
+                          return buildFolderTile(context, snapshot.data[index]);
                         },
                       );
                     } else {
@@ -57,12 +58,14 @@ class MenuScreen extends StatelessWidget {
   }
 }
 
-ListTile buildFolderTile(Folder folder) {
+ListTile buildFolderTile(BuildContext context, Folder folder) {
   return ListTile(
     leading: Icon(Icons.map),
     title: Text(folder.text),
     onTap: () {
       print('go');
+      AppData().setFolderID(folder.id);
+      Navigator.pushNamed(context, FlashcardScreen.id);
     },
   );
 }

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -18,7 +17,7 @@ class Folder {
   }
 }
 
-final String dbName = 'fukusyu_card.db';
+final String dbName = 'flashcard2.db';
 
 Future<List<Folder>> getFolders() async {
   int folderCount = await getFoldersCount();
@@ -46,9 +45,12 @@ Future<Database> connectDB() async {
   return openDatabase(
     join(await getDatabasesPath(), dbName),
     onCreate: (db, version) {
+      print("AA");
+      db.execute(
+          "CREATE TABLE folder(id INTEGER PRIMARY KEY AUTOINCREMENT, text TEXT, priority INTEGER)");
+      print("BB");
       return db.execute(
-        "CREATE TABLE folder(id INTEGER PRIMARY KEY AUTOINCREMENT, text TEXT, priority INTEGER)",
-      );
+          "CREATE TABLE card (id INTEGER PRIMARY KEY AUTOINCREMENT, folderID INTEGER, problemPhotoPath TEXT, answerPhotoPath TEXT, deleteFlag INTEGER, priority INTEGER)");
     },
     version: 1,
   );

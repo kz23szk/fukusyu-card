@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fukusyu_card/screens/menu_screen.dart';
 import 'package:fukusyu_card/screens/camera_screen.dart';
+import 'package:fukusyu_card/screens/flashcard_screen.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'models/folder.dart';
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         routes: {
           MenuScreen.id: (context) => MenuScreen(),
           CameraScreen.id: (context) => CameraScreen(),
+          FlashcardScreen.id: (context) => FlashcardScreen(),
         },
       ),
     );
