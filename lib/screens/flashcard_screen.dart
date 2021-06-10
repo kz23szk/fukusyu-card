@@ -5,6 +5,8 @@ import 'package:fukusyu_card/models/flashcard.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:preload_page_view/preload_page_view.dart';
+import 'package:photo_view/photo_view.dart';
 
 // 画像暗記カードのメイン画面
 class FlashcardScreen extends StatefulWidget {
@@ -18,25 +20,23 @@ class _MyHomePageState extends State<FlashcardScreen> {
   File _image_question;
   File _image_answer;
   File _image_display;
+  bool isQuestionImage = true;
+  int _currentIndex = 0;
   final picker = ImagePicker();
 
   Future getImage() async {
     //　問題の撮影
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    final questionImageFile = await picker.getImage(source: ImageSource.camera);
 
     //　回答の撮影
-    //final pickedFile2 = await picker.getImage(source: ImageSource.camera);
+    final answerImageFile = await picker.getImage(source: ImageSource.camera);
 
     setState(() {
-      if (pickedFile != null) {
-        _image_question = File(pickedFile.path);
-        _image_display = _image_question;
-      }
       insertFlashcard(Flashcard(
           id: 1,
           folderID: AppData().selectedFolderID,
-          problemPhotoPath: pickedFile.path,
-          answerPhotoPath: pickedFile.path,
+          problemPhotoPath: questionImageFile.path,
+          answerPhotoPath: answerImageFile.path,
           deleteFlag: 0,
           priority: 1));
       print("registered!!");
@@ -45,6 +45,10 @@ class _MyHomePageState extends State<FlashcardScreen> {
       // }
     });
   }
+
+  final _controller = PreloadPageController(
+    initialPage: 0,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -66,14 +70,53 @@ class _MyHomePageState extends State<FlashcardScreen> {
               builder: (BuildContext context,
                   AsyncSnapshot<List<Flashcard>> snapshot) {
                 if (snapshot.hasData && snapshot.data.length > 0) {
-                  return Column(
-                    children: <Widget>[
-                      Center(
-                        child:
-                            Image.file(File(snapshot.data[0].problemPhotoPath)),
-                      ),
-                    ],
-                  );
+                  return PreloadPageView.builder(
+                      preloadPagesCount: 2,
+                      controller: _controller,
+                      onPageChanged: (index) {
+                        setState(() {
+                          _currentIndex = index;
+                        });
+                      },
+                      reverse: true,
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (context, index) {
+                        final flashcard = snapshot.data[index];
+                        return Column(children: <Widget>[
+                          PhotoView(
+                            onTapUp: (context, details, controllerValue) {
+                              setState(() {
+                                // 5. 画面タップで答え画像への切り替えができる??
+                                isQuestionImage = !isQuestionImage;
+                                print("flip!!");
+                                print(snapshot.data[index].problemPhotoPath);
+                                print(snapshot.data[index].answerPhotoPath);
+                              });
+                            },
+                            imageProvider: isQuestionImage
+                                ? FileImage(
+                                    File(snapshot.data[index].problemPhotoPath))
+                                : FileImage(
+                                    File(snapshot.data[index].answerPhotoPath)),
+                          ),
+                          PhotoView(
+                            onTapUp: (context, details, controllerValue) {
+                              setState(() {
+                                // 5. 画面タップで答え画像への切り替えができる??
+                                isQuestionImage = !isQuestionImage;
+                                print("flip!!");
+                                print(snapshot.data[index].problemPhotoPath);
+                                print(snapshot.data[index].answerPhotoPath);
+                              });
+                            },
+                            imageProvider: isQuestionImage
+                                ? FileImage(
+                                    File(snapshot.data[index].problemPhotoPath))
+                                : FileImage(
+                                    File(snapshot.data[index].answerPhotoPath)),
+                          ),
+                        ]);
+                      });
                 } else {
                   return ListTile(
                     leading: Icon(Icons.map),
