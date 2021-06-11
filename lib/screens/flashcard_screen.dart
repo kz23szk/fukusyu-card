@@ -17,9 +17,6 @@ class FlashcardScreen extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<FlashcardScreen> {
-  File _image_question;
-  File _image_answer;
-  File _image_display;
   bool isQuestionImage = true;
   int _currentIndex = 0;
   final picker = ImagePicker();
@@ -40,9 +37,6 @@ class _MyHomePageState extends State<FlashcardScreen> {
           deleteFlag: 0,
           priority: 1));
       print("registered!!");
-      // if (pickedFile2 != null) {
-      //   _image_answer = File(pickedFile2.path);
-      // }
     });
   }
 
@@ -52,6 +46,7 @@ class _MyHomePageState extends State<FlashcardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
           title: Text(
@@ -82,40 +77,39 @@ class _MyHomePageState extends State<FlashcardScreen> {
                       itemCount: snapshot.data.length,
                       itemBuilder: (context, index) {
                         final flashcard = snapshot.data[index];
-                        return Column(children: <Widget>[
-                          PhotoView(
-                            onTapUp: (context, details, controllerValue) {
-                              setState(() {
-                                // 5. 画面タップで答え画像への切り替えができる??
-                                isQuestionImage = !isQuestionImage;
-                                print("flip!!");
-                                print(snapshot.data[index].problemPhotoPath);
-                                print(snapshot.data[index].answerPhotoPath);
-                              });
-                            },
-                            imageProvider: isQuestionImage
-                                ? FileImage(
-                                    File(snapshot.data[index].problemPhotoPath))
-                                : FileImage(
-                                    File(snapshot.data[index].answerPhotoPath)),
+                        return Container(
+                          width: 100,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                Container(
+                                  height: size.height,
+                                  alignment: Alignment.topCenter,
+                                  child: Image(
+                                      image: FileImage(File(snapshot
+                                          .data[index].problemPhotoPath))),
+                                ),
+                                // Container(
+                                //   // 内側の余白（パディング）
+                                //   padding: EdgeInsets.all(8),
+                                //   // 外側の余白（マージン）
+                                //   margin: EdgeInsets.all(8),
+                                //   child: Text('padding / margin'),
+                                // ),
+                                Image(
+                                    image: FileImage(File(
+                                        snapshot.data[index].answerPhotoPath))),
+                                // PhotoView(
+                                //     imageProvider: FileImage(File(
+                                //         snapshot.data[index].problemPhotoPath))),
+                                // PhotoView(
+                                //     imageProvider: FileImage(File(
+                                //         snapshot.data[index].answerPhotoPath))),
+                              ],
+                            ),
                           ),
-                          PhotoView(
-                            onTapUp: (context, details, controllerValue) {
-                              setState(() {
-                                // 5. 画面タップで答え画像への切り替えができる??
-                                isQuestionImage = !isQuestionImage;
-                                print("flip!!");
-                                print(snapshot.data[index].problemPhotoPath);
-                                print(snapshot.data[index].answerPhotoPath);
-                              });
-                            },
-                            imageProvider: isQuestionImage
-                                ? FileImage(
-                                    File(snapshot.data[index].problemPhotoPath))
-                                : FileImage(
-                                    File(snapshot.data[index].answerPhotoPath)),
-                          ),
-                        ]);
+                        );
                       });
                 } else {
                   return ListTile(
@@ -133,6 +127,20 @@ class _MyHomePageState extends State<FlashcardScreen> {
       ),
     );
   }
+}
+
+Widget buildImage(String path) {
+  return PhotoView(imageProvider: FileImage(File(path))
+      // onTapUp: (context, details, controllerValue) {
+      //   setState(() {
+      //     // 5. 画面タップで答え画像への切り替えができる??
+      //     isQuestionImage = !isQuestionImage;
+      //     print("flip!!");
+      //     print(snapshot.data[index].problemPhotoPath);
+      //     print(snapshot.data[index].answerPhotoPath);
+      //   });
+      // },
+      );
 }
 
 ListTile buildCardTile(Flashcard card) {
