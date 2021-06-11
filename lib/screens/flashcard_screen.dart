@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:preload_page_view/preload_page_view.dart';
 import 'package:photo_view/photo_view.dart';
+import 'dart:developer';
 
 // 画像暗記カードのメイン画面
 class FlashcardScreen extends StatefulWidget {
@@ -44,9 +45,12 @@ class _MyHomePageState extends State<FlashcardScreen> {
     initialPage: 0,
   );
 
+  final ScrollController controller = ScrollController();
+
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final appBarHeight = AppBar().preferredSize.height;
     return Scaffold(
       appBar: AppBar(
           title: Text(
@@ -69,47 +73,44 @@ class _MyHomePageState extends State<FlashcardScreen> {
                       preloadPagesCount: 2,
                       controller: _controller,
                       onPageChanged: (index) {
+                        isQuestionImage = true;
+                        scrollToTop();
                         setState(() {
-                          _currentIndex = index;
+                          //_currentIndex = index;
                         });
                       },
                       reverse: true,
                       itemCount: snapshot.data.length,
                       itemBuilder: (context, index) {
-                        final flashcard = snapshot.data[index];
-                        return Container(
-                          width: 100,
-                          child: SingleChildScrollView(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                Container(
-                                  height: size.height,
-                                  alignment: Alignment.topCenter,
-                                  child: Image(
-                                      image: FileImage(File(snapshot
-                                          .data[index].problemPhotoPath))),
-                                ),
-                                // Container(
-                                //   // 内側の余白（パディング）
-                                //   padding: EdgeInsets.all(8),
-                                //   // 外側の余白（マージン）
-                                //   margin: EdgeInsets.all(8),
-                                //   child: Text('padding / margin'),
-                                // ),
-                                Image(
-                                    image: FileImage(File(
-                                        snapshot.data[index].answerPhotoPath))),
-                                // PhotoView(
-                                //     imageProvider: FileImage(File(
-                                //         snapshot.data[index].problemPhotoPath))),
-                                // PhotoView(
-                                //     imageProvider: FileImage(File(
-                                //         snapshot.data[index].answerPhotoPath))),
-                              ],
-                            ),
-                          ),
-                        );
+                        return GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: () {
+                              setState(() {
+                                move(isQuestionImage,
+                                    screenHeight - appBarHeight);
+                                isQuestionImage = !isQuestionImage;
+                              });
+                            },
+                            child: SingleChildScrollView(
+                                controller: controller,
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: screenHeight - appBarHeight,
+                                      alignment: Alignment.topCenter,
+                                      child: Image(
+                                          image: FileImage(File(snapshot
+                                              .data[index].problemPhotoPath))),
+                                    ),
+                                    Container(
+                                      height: screenHeight - appBarHeight,
+                                      alignment: Alignment.topCenter,
+                                      child: Image(
+                                          image: FileImage(File(snapshot
+                                              .data[index].answerPhotoPath))),
+                                    )
+                                  ],
+                                )));
                       });
                 } else {
                   return ListTile(
@@ -127,20 +128,26 @@ class _MyHomePageState extends State<FlashcardScreen> {
       ),
     );
   }
+
+  void move(bool isQuestionImage, double height) {
+    controller.animateTo(
+      isQuestionImage ? height : 0,
+      duration: Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void scrollToTop() {
+    controller.animateTo(
+      0,
+      duration: Duration(milliseconds: 50),
+      curve: Curves.ease,
+    );
+  }
 }
 
 Widget buildImage(String path) {
-  return PhotoView(imageProvider: FileImage(File(path))
-      // onTapUp: (context, details, controllerValue) {
-      //   setState(() {
-      //     // 5. 画面タップで答え画像への切り替えができる??
-      //     isQuestionImage = !isQuestionImage;
-      //     print("flip!!");
-      //     print(snapshot.data[index].problemPhotoPath);
-      //     print(snapshot.data[index].answerPhotoPath);
-      //   });
-      // },
-      );
+  return PhotoView(imageProvider: FileImage(File(path)));
 }
 
 ListTile buildCardTile(Flashcard card) {

@@ -4,7 +4,7 @@ class AppData extends ChangeNotifier {
   int count = 55;
   int selectedFolderID = 0;
 
-  AppData() {}
+  AppData();
 
   void setFolderID(int id) {
     selectedFolderID = id;
