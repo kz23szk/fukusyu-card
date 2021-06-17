@@ -20,6 +20,7 @@ class FlashcardScreen extends StatefulWidget {
 class _MyHomePageState extends State<FlashcardScreen> {
   bool isQuestionImage = true;
   int _currentIndex = 0;
+  Flashcard currentDisplayedCard = Flashcard();
   final picker = ImagePicker();
 
   Future getImage() async {
@@ -59,8 +60,37 @@ class _MyHomePageState extends State<FlashcardScreen> {
           ),
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.add_a_photo),
-              onPressed: () => Navigator.pushNamed(context, CameraScreen.id),
+              icon: Icon(Icons.delete),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (_) {
+                    return AlertDialog(
+                      title: Text("削除しますか？"),
+                      actions: <Widget>[
+                        // ボタン領域
+                        FlatButton(
+                          child: Text("キャンセル"),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        FlatButton(
+                          child: Text("削除"),
+                          //TODO: 削除処理を入れる
+                          onPressed: () {
+                            // DB上のレコード削除
+                            deleteFlashcard(currentDisplayedCard.id);
+                            // 写真ファイルの削除
+                            deleteFile(currentDisplayedCard.problemPhotoPath);
+                            deleteFile(currentDisplayedCard.answerPhotoPath);
+                            Navigator.pop(context);
+                            setState(() {});
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
             ),
           ]),
       body: SafeArea(
@@ -76,7 +106,9 @@ class _MyHomePageState extends State<FlashcardScreen> {
                         isQuestionImage = true;
                         scrollToTop();
                         setState(() {
-                          //_currentIndex = index;
+                          _currentIndex = index;
+                          currentDisplayedCard = snapshot.data[index];
+                          print(_currentIndex);
                         });
                       },
                       reverse: true,

@@ -36,9 +36,12 @@ class _MyHomePageState extends State<CameraScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('復習カード'),
-      ),
+      appBar: AppBar(title: Text('復習カード'), actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.delete),
+          onPressed: () => Navigator.pushNamed(context, CameraScreen.id),
+        ),
+      ]),
       body: Column(
         children: <Widget>[
           Center(
