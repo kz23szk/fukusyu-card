@@ -8,12 +8,6 @@ import 'package:provider/provider.dart';
 final String dbName = 'fukusyu_card.db';
 
 void main() async {
-  // データベース接続
-  // final Future<Database> database = openDatabase(
-  //   join(await getDatabasesPath(), dbName),
-  // );
-  //var count = getFoldersCount();
-
   runApp(MyApp());
 }
 
@@ -24,7 +18,6 @@ class MyApp extends StatelessWidget {
       create: (_) => AppData(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        // Debugラベルはずす
         title: "復習カード",
         theme: ThemeData(
           primarySwatch: Colors.blue,
@@ -34,7 +27,6 @@ class MyApp extends StatelessWidget {
         initialRoute: MenuScreen.id,
         routes: {
           MenuScreen.id: (context) => MenuScreen(),
-          CameraScreen.id: (context) => CameraScreen(),
           FlashcardScreen.id: (context) => FlashcardScreen(),
         },
       ),

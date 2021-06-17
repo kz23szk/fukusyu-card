@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'camera_screen.dart';
 import 'package:fukusyu_card/models/app_data.dart';
 import 'package:fukusyu_card/models/folder.dart';
 import 'flashcard_screen.dart';
@@ -18,7 +17,7 @@ class MenuScreen extends StatelessWidget {
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.settings),
-                onPressed: () => Navigator.pushNamed(context, CameraScreen.id),
+                onPressed: () {}, // TODO: 設定画面へ遷移
               ),
             ]),
         body: SafeArea(

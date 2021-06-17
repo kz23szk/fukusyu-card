@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'camera_screen.dart';
 import 'package:fukusyu_card/models/app_data.dart';
 import 'package:fukusyu_card/models/flashcard.dart';
 import 'dart:async';
